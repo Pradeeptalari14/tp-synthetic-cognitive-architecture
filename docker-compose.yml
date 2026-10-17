@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  synthetic-cognitive-architecture:
+    build: .
+    image: ghcr.io/pradeeptalari14/tp-synthetic-cognitive-architecture:latest
+    container_name: tp-synthetic-cognitive-architecture
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

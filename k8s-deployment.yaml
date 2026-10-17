@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synthetic-cognitive-kernel
+  labels:
+    app: synthetic-cognitive-kernel
+    domain: synthetic-intelligence
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: synthetic-cognitive-kernel
+  template:
+    metadata:
+      labels:
+        app: synthetic-cognitive-kernel
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      containers:
+        - name: cognitive-kernel
+          image: ghcr.io/pradeeptalari14/tp-synthetic-cognitive-architecture:latest
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+          readinessProbe:
+            exec:
+              command: ["python", "-c", "import sys; sys.exit(0)"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["python", "-c", "import sys; sys.exit(0)"]
+            initialDelaySeconds: 15
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: synthetic-cognitive-service
+spec:
+  selector:
+    app: synthetic-cognitive-kernel
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
